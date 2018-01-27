@@ -4,17 +4,17 @@ var Image = require('./Image');
 
 
 // GETS IMAGES BY A WORD CONTAINED IN THE DESCRIPTION
-router.get('/:keyword', function (req, res) {
+router.get('/:keyword', function (request, response) {
 
-    var findByKeywordRegex = new RegExp( req.params.keyword, 'i');
+    const findByKeywordRegex = new RegExp( request.params.keyword, 'i');
     const findByKeywordInDescriptionQuery = {
         "description": findByKeywordRegex
     };
 
-    Image.find(findByKeywordInDescriptionQuery, function (err, image) {
-        if (err) return res.status(500).send("There was a problem finding the image by the given keyword.");
-        if (!image) return res.status(404).send("No image found.");
-        res.status(200).send(image);
+    Image.find(findByKeywordInDescriptionQuery, function (error, image) {
+        if (error) return response.status(500).send("There was a problem finding the image by the given keyword.");
+        if (!image) return response.status(404).send("No image found.");
+        response.status(200).send(image);
     });
 });
 
