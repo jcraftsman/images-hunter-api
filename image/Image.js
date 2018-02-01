@@ -1,8 +1,30 @@
-var mongoose = require('mongoose');
-var ImageSchema = new mongoose.Schema({
+const mongoose = require('mongoose');
+const SCHEMA = {
   name: String,
   url: String,
   description: String,
-});
-mongoose.model('Image', ImageSchema);
-module.exports = mongoose.model('Image');
+};
+
+const ImageSchema = new mongoose.Schema(SCHEMA);
+const imagesRepository = mongoose.model('Image', ImageSchema);
+
+const findByText = (text) => {
+  const findByKeywordRegex = new RegExp(text, 'i');
+  const findByKeywordInDescriptionQuery = {
+    "description": findByKeywordRegex
+  };
+  return imagesRepository.find(findByKeywordInDescriptionQuery)
+}
+const create = (query) => (imagesRepository.create(query));
+const find = (query) => (imagesRepository.find(query));
+const findById = (id) => (imagesRepository.findById(id));
+const findByIdAndRemove = (id) => (imagesRepository.findByIdAndRemove(id));
+
+const imageHunter = {
+  create,
+  find,
+  findByText,
+  findById,
+  findByIdAndRemove,
+};
+module.exports = imageHunter;

@@ -1,43 +1,55 @@
-var express = require('express');
-var router = express.Router();
-var Image = require('./Image');
+const express = require('express');
+const router = express.Router();
+const Image = require('./Image');
 
 // CREATES A NEW IMAGE
-router.post('/', function (request, response) {
+router.post('/', (request, response) => {
     Image.create({
             name: request.body.name,
             url: request.body.url,
             description: request.body.description
-        },
-        function (error, image) {
-            if (error) return response.status(500).send("There was a problem adding the information to the database.");
+        })
+        .catch(error => {
+            response.status(500).send("There was a problem adding the information to the database.");
+        })
+        .then(image => {
             response.status(200).send(image);
-        });
+        })
 });
+
 // RETURNS ALL THE IMAGES IN THE DATABASE
-router.get('/', function (request, response) {
-    Image.find({}, function (error, Images) {
-        if (error) return response.status(500).send("There was a problem finding the images.");
-        response.status(200).send(Images);
-    });
+router.get('/', (request, response) => {
+    Image.find()
+        .catch(error => {
+            response.status(500).send("There was a problem finding the images.")
+        })
+        .then(images => {
+            response.status(200).send(images);
+        });
 });
 
 // GETS A SINGLE IMAGE FROM THE DATABASE
-router.get('/:id', function (request, response) {
-    Image.findById(request.params.id, function (error, image) {
-        if (error) return response.status(500).send("There was a problem finding the image.");
-        if (!image) return response.status(404).send("No image found.");
-        response.status(200).send(image);
-    });
+router.get('/:id', (request, response) => {
+    Image.findById(request.params.id)
+        .catch(error => {
+            response.status(500).send("There was a problem finding the image.");
+        })
+        .then(image => {
+            if (!image) return response.status(404).send("No image found.");
+            response.status(200).send(image);
+        });
 });
 
 // DELETES AN IMAGE FROM THE DATABASE
-router.delete('/:id', function (request, response) {
-    Image.findByIdAndRemove(request.params.id, function (error, image) {
-        if (error) return response.status(500).send("There was a problem deleting the image.");
-        if (!image) return response.status(404).send("No image found.");
-        response.status(200).send("Image " + image + " was deleted.");
-    });
+router.delete('/:id', (request, response) => {
+    Image.findByIdAndRemove(request.params.id)
+        .catch(error => {
+            response.status(500).send("There was a problem deleting the image.");
+        })
+        .then(image => {
+            if (!image) return response.status(404).send("No image found.");
+            response.status(204).send();
+        });
 });
 
 module.exports = router;
