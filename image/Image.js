@@ -19,6 +19,7 @@ const create = (query) => (imagesRepository.create(query));
 const find = (query) => (imagesRepository.find(query));
 const findById = (id) => (imagesRepository.findById(id));
 const findByIdAndRemove = (id) => (imagesRepository.findByIdAndRemove(id));
+const deleteAll = () => (imagesRepository.remove({}));
 
 const imageHunter = {
   create,
@@ -26,5 +27,6 @@ const imageHunter = {
   findByText,
   findById,
   findByIdAndRemove,
+  deleteAll,
 };
 module.exports = imageHunter;

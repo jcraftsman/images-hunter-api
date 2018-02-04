@@ -52,4 +52,14 @@ router.delete('/:id', (request, response) => {
         });
 });
 
+router.delete('/', (request, response) => {
+    Image.deleteAll()
+        .catch(error => {
+            response.status(500).send("There was a problem deleting all the images.");
+        })
+        .then(image => {
+            response.status(204).send();
+        });
+});
+
 module.exports = router;
