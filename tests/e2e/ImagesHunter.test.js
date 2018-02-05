@@ -1,10 +1,10 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../app');
+const app = require('../../app');
 
 describe('ImagesHunter', () => {
     beforeAll(() => {
-        mongoose.connect('mongodb://localhost/imagesHunter');
+        mongoose.connect(process.env.DB_URL);
     })
     afterAll((done) => {
         mongoose.disconnect(done);
