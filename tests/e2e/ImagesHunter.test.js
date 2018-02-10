@@ -1,6 +1,6 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../../app');
+const app = require('../../infra/AppAssembly');
 
 describe('ImagesHunter', () => {
     beforeAll(() => {
@@ -20,6 +20,7 @@ describe('ImagesHunter', () => {
     };
     beforeEach(() => {
         return Promise.all([
+            deleteImage(),
             createImage(anImage),
             createImage(theMatchingImage)
         ]);
@@ -40,7 +41,7 @@ describe('ImagesHunter', () => {
                 });
         });
     });
-    describe('GET images by mathing text ', () => {
+    describe('GET images by matching text ', () => {
         it('responds successfully with only the images with a description that contains the given text', () => {
             return request(app).get("/hunt/word")
                 .expect(200)
@@ -62,5 +63,4 @@ const createImage = (image) => {
 const deleteImage = (image) => {
     return request(app).delete("/images/")
         .expect(204);
-
 }

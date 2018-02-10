@@ -1,31 +1,36 @@
 const request = require('supertest');
 const sinon = require('sinon');
-const app = require('../app');
-const Image = require('../image/Image');
+const App = require('../../infra/App');
+const ImagesApiRouter = require('../../interfaces/ImagesApiRouter');
+const HuntApiRouter = require('../../interfaces/HuntApiRouter');
+
 
 describe('API routing', () => {
+    let app;
+    const clearImagesStub = {};
+    const findImagesStub = {};
+    const imagesIndexStub = {};
+
+    beforeAll(() => {
+        const imagesApiRouter = new ImagesApiRouter(findImagesStub, imagesIndexStub, clearImagesStub)
+        const huntApiRouter = new HuntApiRouter(findImagesStub)
+        app = new App(imagesApiRouter, huntApiRouter).start();
+    })
+
     const anImage = {
         url: "https://my.ima.ge",
         description: "This is a wonderful image"
     };
     const allImages = [anImage];
-    const ImageStub = {};
 
     beforeEach(() => {
-        ImageStub.create = sinon.stub(Image, 'create');
-        ImageStub.find = sinon.stub(Image, 'find');
-        ImageStub.findById = sinon.stub(Image, 'findById');
-        ImageStub.findByText = sinon.stub(Image, 'findByText');
-        ImageStub.findByIdAndRemove = sinon.stub(Image, 'findByIdAndRemove');
-        ImageStub.deleteAll = sinon.stub(Image, 'deleteAll');
-    });
-    afterEach(() => {
-        ImageStub.create.restore();
-        ImageStub.find.restore();
-        ImageStub.findById.restore();
-        ImageStub.findByText.restore();
-        ImageStub.findByIdAndRemove.restore();
-        ImageStub.deleteAll.restore();
+        imagesIndexStub.process = sinon.stub();
+        findImagesStub.all = sinon.stub();
+        findImagesStub.byId = sinon.stub();
+        findImagesStub.byText = sinon.stub();
+        clearImagesStub.all = sinon.stub();
+        clearImagesStub.byId = sinon.stub();
+
     });
 
     describe('/images path', () => {
@@ -41,7 +46,7 @@ describe('API routing', () => {
             describe('nominal scenario', () => {
                 beforeEach(() => {
                     // Given
-                    ImageStub.create
+                    imagesIndexStub.process
                         .withArgs(sinon.match(newImage))
                         .returns(
                             Promise.resolve(createdImage)
@@ -62,7 +67,7 @@ describe('API routing', () => {
             describe('when something goes wrong', () => {
                 beforeEach(() => {
                     // Given
-                    ImageStub.create.rejects(new Error('fail'));
+                    imagesIndexStub.process.rejects(new Error('fail'));
                     // When
                     postNewImage = request(app)
                         .post("/images/")
@@ -80,7 +85,7 @@ describe('API routing', () => {
             describe('nominal scenario', () => {
                 beforeEach(() => {
                     // Given
-                    ImageStub.find.returns(Promise.resolve(allImages));
+                    findImagesStub.all.returns(Promise.resolve(allImages));
                     // When
                     getImages = request(app).get("/images/");
                 });
@@ -99,7 +104,7 @@ describe('API routing', () => {
             describe('when something goes wrong', () => {
                 beforeEach(() => {
                     // Given
-                    ImageStub.find.rejects(new Error('fail'));
+                    findImagesStub.all.rejects(new Error('fail'));
                     // When
                     getImages = request(app).get("/images/");
                 });
@@ -114,7 +119,7 @@ describe('API routing', () => {
                 describe('when the the image exists', () => {
                     beforeEach(() => {
                         // Given
-                        ImageStub.findById
+                        findImagesStub.byId
                             .withArgs('aUniqueImageId')
                             .returns(Promise.resolve(anImage));
                         // When
@@ -135,7 +140,7 @@ describe('API routing', () => {
                 describe('when the the image is missing', () => {
                     beforeEach(() => {
                         // Given
-                        ImageStub.findById
+                        findImagesStub.byId
                             .withArgs('aUniqueImageId')
                             .returns(Promise.resolve(null));
                         // When
@@ -149,7 +154,7 @@ describe('API routing', () => {
                 describe('when something goes wrong', () => {
                     beforeEach(() => {
                         // Given
-                        ImageStub.findById
+                        findImagesStub.byId
                             .withArgs('aUniqueImageId')
                             .rejects(new Error('fail'));
                         // When
@@ -173,7 +178,7 @@ describe('API routing', () => {
                         }
                         beforeEach(() => {
                             // Given
-                            ImageStub.findByIdAndRemove
+                            clearImagesStub.byId
                                 .withArgs(existingImage._id)
                                 .returns(
                                     Promise.resolve(existingImage)
@@ -195,7 +200,7 @@ describe('API routing', () => {
                     describe('when the the image is missing', () => {
                         beforeEach(() => {
                             // Given
-                            ImageStub.findByIdAndRemove
+                            clearImagesStub.byId
                                 .withArgs('aUniqueImageId')
                                 .returns(Promise.resolve(null));
                             // When
@@ -209,7 +214,7 @@ describe('API routing', () => {
                     describe('when something goes wrong', () => {
                         beforeEach(() => {
                             // Given
-                            ImageStub.findByIdAndRemove.rejects(new Error('fail'));
+                            clearImagesStub.byId.rejects(new Error('fail'));
                             // When
                             deleteImage = request(app).delete("/images/aUniqueImageId");
                         });
@@ -225,7 +230,7 @@ describe('API routing', () => {
                     describe('nominalScenario', () => {
                         beforeEach(() => {
                             // Given
-                            ImageStub.deleteAll
+                            clearImagesStub.all
                                 .returns(Promise.resolve(null));
                             // When
                             deleteAllImages = request(app).delete("/images/");
@@ -243,7 +248,7 @@ describe('API routing', () => {
                     describe('when something goes wrong', () => {
                         beforeEach(() => {
                             // Given
-                            ImageStub.deleteAll.rejects(new Error('fail'));
+                            clearImagesStub.all.rejects(new Error('fail'));
                             // When
                             deleteAllImages = request(app).delete("/images/");
                         });
@@ -262,7 +267,7 @@ describe('API routing', () => {
 
                         beforeEach(() => {
                             // Given
-                            ImageStub.findByText
+                            findImagesStub.byText
                                 .withArgs('myKeyword')
                                 .returns(Promise.resolve(allImages));
                             // When
@@ -279,7 +284,7 @@ describe('API routing', () => {
                     describe('when not matching image is found', () => {
                         beforeEach(() => {
                             // Given
-                            ImageStub.findByText
+                            findImagesStub.byText
                                 .withArgs('myKeyword')
                                 .returns(Promise.resolve(null));
                             // When
@@ -293,7 +298,7 @@ describe('API routing', () => {
                     describe('when something goes wrong', () => {
                         beforeEach(() => {
                             // Given
-                            ImageStub.findByText.rejects(new Error('fail'));
+                            findImagesStub.byText.rejects(new Error('fail'));
                             // When
                             huntImages = request(app).get("/hunt/myKeyword");
                         });
