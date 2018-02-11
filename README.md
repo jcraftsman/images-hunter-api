@@ -1,5 +1,7 @@
 # Image hunter API
 
+[![Build Status](https://travis-ci.org/jcraftsman/images-hunter-api.svg?branch=master)](https://travis-ci.org/jcraftsman/images-hunter-api)
+
 ## About this repo
 
 This is the git repo of Image hunter API.
