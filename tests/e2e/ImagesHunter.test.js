@@ -20,7 +20,6 @@ describe('ImagesHunter', () => {
     };
     beforeEach(() => {
         return Promise.all([
-            deleteImage(),
             createImage(anImage),
             createImage(theMatchingImage)
         ]);
@@ -34,10 +33,10 @@ describe('ImagesHunter', () => {
             return request(app).get("/images/")
                 .expect(200)
                 .then((response) => {
-                    expect(response.body).toEqual([
+                    expect(response.body.sort()).toEqual([
                         expect.objectContaining(anImage),
                         expect.objectContaining(theMatchingImage)
-                    ]);
+                    ].sort());
                 });
         });
     });
