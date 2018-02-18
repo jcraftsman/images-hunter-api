@@ -58,7 +58,7 @@ describe('API routing', () => {
                 });
 
                 it('should respond successfully', () => {
-                    return postNewImage.expect(200);
+                    return postNewImage.expect(201);
                 });
                 it('should return the created image', () => {
                     return postNewImage.expect(createdImage);

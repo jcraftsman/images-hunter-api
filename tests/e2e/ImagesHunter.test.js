@@ -56,7 +56,7 @@ describe('ImagesHunter', () => {
 const createImage = (image) => {
     return request(app).post("/images/")
         .send(image)
-        .expect(200);
+        .expect(201);
 };
 
 const deleteImage = (image) => {

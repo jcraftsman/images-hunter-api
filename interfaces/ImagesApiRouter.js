@@ -25,7 +25,7 @@ class ImagesApiRouter {
                     description: request.body.description
                 })
                 .then(image => {
-                    response.status(200).send(image);
+                    response.status(201).send(image);
                 })
                 .catch(error => {
                     response.status(500).send("There was a problem adding the information to the database.");
