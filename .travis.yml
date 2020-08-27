@@ -2,14 +2,11 @@ language: node_js
 node_js:
 - node
 - '9'
-
 stages:
 - test
 - qualify
 - name: deploy
   if: branch = master
-
-  
 jobs:
   include:
   - stage: qualify
@@ -20,12 +17,11 @@ jobs:
     before_script:
     - sleep 15
     - mongo images-hunter --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
-
   - stage: deploy
     script: skip
-    deploy: &heroku
+    deploy:
       provider: heroku
       api_key:
-        secure: OaiWUl85BUCN4sAx0oUxVwXUxtvAhMuVnP8eZpNkyPKCMGxcF5gCobsqDi2ayRdH7MbqT7uX9RdKCsAAFmicXg/iI2S2SPfO0SJZpZZ64TMhi6ZJ1LLubqqXP2wjUWVnlWwPddKTDjR5XivgswBDvXX78buYLp/VC3ej6LzgOxYx3ZZ+pZ8Vl6tz2HwPBO/4Vf74e6+BxY1OkZ/Xfgu1yEFjhj8DCsdOweXvmg3Ocya+QRaxLWqdZ84Ts4pbToCbrtMLVArqJskdP4FeRDHmDlWr4yRWUUn1uNx+g8hP9BjCoauLBBtTrN7TJpnPLfQiupfOprS4MfPFNM8bzXMzBZPWi8DToy3dwoKnwLT5Go2jesmO2WYWMY5m0nrys9UJm/VcJ6bUMcW9QGYgsFhmQh63MDpbpUiK/owqSgoebJz41zIoTu9d4UTWYQeAio7x1EXUN2UBwUiRq6ZAAQsH2iSNFQpeTr1k8fzLKyUVgk0mZN+V4B44MejFzFN99grhr8v4NJz/kmYpN9j1x413OV1phq25UexXzNcp+SFCJU0nkKvHtynFK2pLft3nq0P1hL+Gs/LKC1cUUJv8DLYfxdO2Gb1SruCV+45di6zr1T1aYduQqpGPWRdvAF5iTBtit2r8n5UW/g86oKgsNEgqJlGutHlF3IYxbI0cOYPzV04=
+        secure: Ua0VtKq70HxObm1vJargsxIgZiPYhTYFTRYHly3aeg+royQt502yRspMOMmNyBMk8MKgKPiKOi2CXZ9XuaF1UveiDEXm6pS6zHl+kaMpENAgUmbL+SOW0rSQIG0Pn2azbDSKYTTDWLBgRdj0hyROxJtMO5SqasuwTN/ZYe2FvQV96Z66yNLEo+9NUDVdfMU9UQ0UsMfYivlyF2pDvr7YRIVXHsMXjAMO8lQtxGoa5b9PdF63z89zav1ulMz1k3QERK2OKj/LbdJq+AA17RP+BVMqAVp4/9NvovflmyNjGBt7Zv7mgHT8YzeCwjROsN6nIlzPhqoBAskTneWoGrdxoQPKD/D3JDGdBe2BPSKYAY7hWhi/m7G1kzt5XA5lVvAjY1NggVaNriI7Z7yUj2M10ZI0VWx1iZLi0ImD6T0EDelAc+sx4YzCj4OWzXVFVFV+u6NpDwe5DVbisIH/uYioXwXwzeCgZDvh7M5gncMpbPMvuJop5kGw+Dk5USsXxgU4mLzB8KFRDUtVy38Q3jrHQ581E/WpeESj1T6dQtR3ExPV9ClwzhqcoVZSo54L6yFldOFEvHhrQZ5JkecsjRueGVIK3z46Coc6hoHmR5+OFo+EIbWdMhEK9U7BxccMEbz8EwMMZI8HVYTznZ7QmCyeaBRj2v+P/hxrLP05oSs3lLA=
       app: shrouded-caverns-57885
       stage: deploy
