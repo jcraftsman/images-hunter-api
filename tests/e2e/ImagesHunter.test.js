@@ -4,7 +4,7 @@ const app = require('../../infra/AppAssembly');
 
 describe('ImagesHunter', () => {
     beforeAll(() => {
-        mongoose.connect(process.env.DB_URL);
+        mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
     })
     afterAll((done) => {
         mongoose.disconnect(done);
